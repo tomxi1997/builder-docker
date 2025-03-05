@@ -43,15 +43,17 @@ jobs:
         git clone https://github.com/moby/moby.git
         cd moby
         git checkout 1a79695
-        docker buildx build -t tomxi/buider1 -o type=docker .
+        docker buildx build -t builder -o type=docker .
           
         
 
     
     - name: docker list
       run: |
-        cd $GITHUB_WORKSPACE/kernel_workspace
-        docker images 
+        cd $GITHUB_WORKSPACE/kernel_workspace/moby
+        wget 
+        chmod +x save.sh
+        ./save.sh
         
       
 
@@ -71,6 +73,6 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: docker-arm64
-        path: kernel_workspace/moby/*.tar
+        path: kernel_workspace/moby/buider-arm64.tar
 
   
