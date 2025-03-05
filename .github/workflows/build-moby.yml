@@ -30,6 +30,7 @@ jobs:
       run: |
         echo "BUILD_TIME=$(TZ=Asia/Shanghai date "+%Y%m%d%H%M")" >> $GITHUB_ENV
         echo "DEVICE=$(echo ${{ env.KERNEL_CONFIG }} | sed 's!vendor/!!;s/_defconfig//;s/_user//;s/-perf//')" >> $GITHUB_ENV
+        sudo apt-get remove containerd -y
         sudo apt-get update
         sudo apt install -y docker.io curl vim git gcc clang
         mkdir -p $GITHUB_WORKSPACE/kernel_workspace
