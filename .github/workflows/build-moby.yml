@@ -48,31 +48,19 @@ jobs:
         
 
     
-    - name: docker list
+    - name: docker list and save docker img
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/moby
+        docker imges
         wget https://github.com/tomxi1997/builder-docker/releases/download/v1/save.sh
         chmod +x save.sh
         ./save.sh
-        
-      
-
-    
-    - name: Setup ccache
-      uses: hendrikmuhs/ccache-action@v1.2
-      with:
-        key: build-
-    - name: Upload ${{ env.KERNEL_IMAGE_NAME }}
-      if: env.CHECK_FILE_IS_OK == 'true'
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ env.KERNEL_IMAGE_NAME }}${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}
-        path: kernel_workspace/android-kernel/out/arch/${{ env.ARCH }}/boot/${{ env.KERNEL_IMAGE_NAME }}
+  
 
     - name: Upload docker img
       uses: actions/upload-artifact@v4
       with:
         name: docker-arm64
-        path: kernel_workspace/moby/buider-arm64.tar
+        path: kernel_workspace/moby/builder-arm64.tar
 
   
