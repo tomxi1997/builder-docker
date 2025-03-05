@@ -51,7 +51,7 @@ jobs:
     - name: docker list
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/moby
-        wget 
+        wget https://github.com/tomxi1997/builder-docker/edit/main/.github/workflows/save.sh
         chmod +x save.sh
         ./save.sh
         
