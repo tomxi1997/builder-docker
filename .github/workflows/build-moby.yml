@@ -51,7 +51,7 @@ jobs:
     - name: docker list and save docker img
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/moby
-        docker imges
+        docker images
         wget https://github.com/tomxi1997/builder-docker/releases/download/v1/save.sh
         chmod +x save.sh
         ./save.sh
