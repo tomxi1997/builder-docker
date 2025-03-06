@@ -42,7 +42,7 @@ jobs:
         cd $GITHUB_WORKSPACE/kernel_workspace
         git clone https://github.com/moby/moby.git
         cd moby
-        git checkout 459d0df
+        git checkout 20.10
         docker buildx build -t builder -o type=docker .
           
         
