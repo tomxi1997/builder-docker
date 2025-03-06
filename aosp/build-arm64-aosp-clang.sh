@@ -90,7 +90,7 @@ cd build
 #ninja install
 
 #使用make编译clang
-cmake -G "Unix Makefiles" -DLLVM_TARGETS_TO_BUILD="AArch64;ARM" -DLLVM_ENABLE_PROJECTS="clang;lld;polly;compiler-rt" -DLLVM_ENABLE_WARNINGS=OFF -DLLVM_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$install_path ../llvm && make -j128 && make install
+cmake -G "Unix Makefiles" -DLLVM_TARGETS_TO_BUILD="AArch64;ARM" -DLLVM_ENABLE_PROJECTS="clang;lld;polly;compiler-rt" -DLLVM_ENABLE_WARNINGS=OFF -DLLVM_BUILD_TESTS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$install_path ../llvm && make -j8 && make install
 
 cd $PW/llvm-project && rm -rf build
 
