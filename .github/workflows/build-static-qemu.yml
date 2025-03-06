@@ -33,7 +33,7 @@ jobs:
         sudo apt-get remove containerd.io -y
         sudo apt-get update
         sudo apt install -y docker.io git ca-certificates xz-utils 
-        mkdir -p $GITHUB_WORKSPACE/kernel_workspace
+        mkdir -p $GITHUB_WORKSPACE/kernel_workspace/artifact
 
   
 
@@ -50,8 +50,6 @@ jobs:
     
     - name: build static qemu with alpine linux docker 
       run: |
-        cd $GITHUB_WORKSPACE/kernel_workspace/
-        mkdir ../artifact
         docker run -it --cidfile=qemu.cid qemu true
         docker cp "$(cat qemu.cid):work/artifact/." ../artifact/.
        
