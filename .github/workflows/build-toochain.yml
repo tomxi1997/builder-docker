@@ -1,4 +1,4 @@
-name: Build kernel by clang-r383902b
+name: Build toolchain for arm64
 on:
   watch:
     types: [started]
@@ -55,7 +55,7 @@ jobs:
             u-boot-tools \
             xz-utils \
             zlib1g-dev
-        mkdir -p $GITHUB_WORKSPACE/kernel_workspace
+         mkdir -p $GITHUB_WORKSPACE/kernel_workspace
 
   
 
@@ -64,6 +64,7 @@ jobs:
         cd $GITHUB_WORKSPACE/kernel_workspace
         git clone https://github.com/ClangBuiltLinux/tc-build
         cd tc-build
+        chmod +x *.py
         ./build-binutils.py -i $GITHUB_WORKSPACE/kernel_workspace/toolchain
         ./build-llvm.py --vendor-string "PSA" --lto full --pgo kernel-defconfig -i $GITHUB_WORKSPACE/kernel_workspace/toolchain
         
@@ -80,7 +81,7 @@ jobs:
     - name: Upload toolchain
       uses: actions/upload-artifact@v4
       with:
-        name: docker-arm64
+        name: toolchain-arm64-ubuntu22.04
         path: kernel_workspace/toolchain.tar.xz
 
   
