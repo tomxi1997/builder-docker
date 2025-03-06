@@ -65,8 +65,8 @@ jobs:
         git clone https://github.com/ClangBuiltLinux/tc-build
         cd tc-build
         chmod +x *.py
-        ./build-binutils.py -i $GITHUB_WORKSPACE/kernel_workspace/toolchain
-        ./build-llvm.py --vendor-string "PSA" --lto full --pgo kernel-defconfig -i $GITHUB_WORKSPACE/kernel_workspace/toolchain
+        ./build-binutils.py --targets arm aarch64 -i $GITHUB_WORKSPACE/kernel_workspace/toolchain
+        ./build-llvm.py --targets "ARM;AArch64" --vendor-string "PSA" --lto full --pgo kernel-defconfig -i $GITHUB_WORKSPACE/kernel_workspace/toolchain
         
           
         
