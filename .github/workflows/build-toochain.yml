@@ -32,7 +32,7 @@ jobs:
         echo "DEVICE=$(echo ${{ env.KERNEL_CONFIG }} | sed 's!vendor/!!;s/_defconfig//;s/_user//;s/-perf//')" >> $GITHUB_ENV
         sudo apt-get remove containerd.io -y
         sudo apt-get update
-        sudo apt install -y apt install bc \
+        sudo apt install -y bc \
             binutils-dev \
             bison \
             build-essential \
