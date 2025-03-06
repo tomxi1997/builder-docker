@@ -66,7 +66,7 @@ jobs:
         cd tc-build
         chmod +x *.py
         ./build-binutils.py --targets arm aarch64 -i $GITHUB_WORKSPACE/kernel_workspace/toolchain
-        ./build-llvm.py --targets "ARM;AArch64" --vendor-string "PSA" --lto full --pgo kernel-defconfig -i $GITHUB_WORKSPACE/kernel_workspace/toolchain
+        ./build-llvm.py -t AArch64 ARM --vendor-string "PSA" --lto full --pgo kernel-defconfig -i $GITHUB_WORKSPACE/kernel_workspace/toolchain
         
           
         
