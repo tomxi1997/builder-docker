@@ -1,1 +1,8 @@
-523
+用于构建来自于aosp补丁后的llvm arm64
+
+
+source 
+https://android.googlesource.com/platform/external/toolchain-utils
+https://android.googlesource.com/toolchain/binutils
+https://android.googlesource.com/toolchain/llvm_android
+https://android.googlesource.com/toolchain/llvm-project
