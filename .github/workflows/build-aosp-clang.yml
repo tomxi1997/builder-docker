@@ -59,10 +59,10 @@ jobs:
 
   
 
-    - name: build 
+    - name: build aosp clang
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        wget 
+        wget https://raw.githubusercontent.com/tomxi1997/builder-docker/main/aosp/build-arm64-aosp-clang.sh
         chmod +x *.sh
         ./build-arm64-aosp-clang.sh
      
