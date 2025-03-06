@@ -1,0 +1,75 @@
+name: Build tc-build-aosp-clang for arm64
+on:
+  watch:
+    types: [started]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Toolchain by ${{ github.actor }}
+    runs-on: ubuntu-22.04-arm
+    if: github.event.repository.owner.id == github.event.sender.id
+    env:
+      CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
+      CCACHE_NOHASHDIR: "true"
+      CCACHE_HARDLINK: "true"
+      CI: "false"
+    steps:
+    - uses: actions/checkout@v4
+    - name: Prepare Configuration
+      run: |
+        echo "ENABLE_NETHUNTER=$(cat $CONFIG_ENV | grep -w "ENABLE_NETHUNTER" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
+        
+    - name: Set swap to 10G
+      uses: pierotofy/set-swap-space@master
+      with:
+        swap-size-gb: 10
+
+    - name: Setup build environment
+      run: |
+        echo "BUILD_TIME=$(TZ=Asia/Shanghai date "+%Y%m%d%H%M")" >> $GITHUB_ENV
+        echo "DEVICE=$(echo ${{ env.KERNEL_CONFIG }} | sed 's!vendor/!!;s/_defconfig//;s/_user//;s/-perf//')" >> $GITHUB_ENV
+        sudo apt-get update
+        sudo apt install -y bc \
+            binutils-dev \
+            bison \
+            build-essential \
+            ca-certificates \
+            ccache \
+            clang \
+            cmake \
+            curl \
+            file \
+            flex \
+            git \
+            libelf-dev \
+            libssl-dev \
+            libstdc++-$(apt list libstdc++6 2>/dev/null | grep -Eos '[0-9]+\.[0-9]+\.[0-9]+' | head -1 | cut -d . -f 1)-dev \
+            lld \
+            make \
+            ninja-build \
+            python3-dev \
+            texinfo \
+            u-boot-tools \
+            xz-utils \
+            zlib1g-dev
+         mkdir -p $GITHUB_WORKSPACE/kernel_workspace
+
+  
+
+    - name: build aosp clang
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace
+        wget https://raw.githubusercontent.com/tomxi1997/builder-docker/main/aosp/build-arm64-aosp-clang_tc-build.sh
+        chmod +x *.sh
+        ./build-arm64-aosp-clang_tc-build.sh
+     
+   
+    - name: Upload toolchain
+      uses: actions/upload-artifact@v4
+      with:
+        name: tc-build_aosp-clang-r547379_ubuntu22.04-arm64
+        path: kernel_workspace/*.tar.xz
+
+  
