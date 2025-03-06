@@ -84,7 +84,7 @@ chmod +x *.py
 
 echo "……………………………………………………………………………………………………………………………………………………………………………………"
 echo "……………………………………………………………………………………………开始编译……………………………………………………………………………………"
-./build-llvm.py --targets "ARM;AArch64" --vendor-string "Aosp Arm" --lto full --pgo kernel-defconfig -i $install_path --no-update
+./build-llvm.py -t AArch64 ARM --vendor-string "Aosp Arm" --lto full --pgo kernel-defconfig -i $install_path --no-update
  
  #打包
 cd $GITHUB_WORKSPACE/kernel_workspace
