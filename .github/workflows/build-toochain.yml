@@ -1,4 +1,4 @@
-name: Build toolchain for arm64
+name: Build LLVM for arm64
 on:
   watch:
     types: [started]
