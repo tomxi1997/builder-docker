@@ -51,7 +51,7 @@ jobs:
     - name: build static qemu with alpine linux docker 
       run: |
         docker run -it --cidfile=qemu.cid qemu true
-        docker cp "$(cat qemu.cid):work/artifact/." ../artifact/.
+        docker cp "$(cat qemu.cid):work/artifact/." $GITHUB_WORKSPACE/kernel_workspace/artifact/.
        
 
     - name: Upload qemu
