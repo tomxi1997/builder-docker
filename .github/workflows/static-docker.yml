@@ -62,9 +62,7 @@ jobs:
         
     - name: add docker tar
       run: |
-        sudo cd /data 
-        sudo tar -czvf docker.tar.xz docker
-        sudo cp docker.tar.xz $GITHUB_WORKSPACE/kernel_workspace/
+        sudo bash -c 'cd /data && tar -czvf docker.tar.xz docker && cp docker.tar.xz $GITHUB_WORKSPACE/kernel_workspace/'
     
 
     - name: Upload docker binary
