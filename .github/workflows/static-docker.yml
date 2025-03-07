@@ -44,7 +44,7 @@ jobs:
         cd cli
         git checkout 20.10
         docker buildx bake --set binary.platform=linux/arm64 
-        sudo install -Dm 0700 build/docker-linux-arm64 $PREFIX/bin/dockerd
+        sudo install -Dm 0700 build/docker-linux-arm64 $PREFIX/bin/docker
           
         
 
