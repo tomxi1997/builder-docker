@@ -40,7 +40,7 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
         export PREFIX=/data/docker/android
-        git clone https://github.com/docker/cli.git
+        git clone https://github.com/tomxi1997/cli.git
         cd cli
         git checkout 24.0
         docker buildx bake --set binary.platform=linux/arm64 
@@ -53,7 +53,7 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/
         export PREFIX=/data/docker/android
-        git clone https://github.com/moby/moby.git
+        git clone https://github.com/tomxi1997/moby.git
         cd moby
         git checkout 24.0
         make binary
