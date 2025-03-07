@@ -42,7 +42,7 @@ jobs:
         export PREFIX=/data/docker/android
         git clone https://github.com/docker/cli.git
         cd cli
-        git checkout v24.0.2
+        git checkout 24.0
         docker buildx bake --set binary.platform=linux/arm64 
         sudo install -Dm 0700 build/docker-linux-arm64 $PREFIX/bin/docker
         
@@ -55,7 +55,7 @@ jobs:
         export PREFIX=/data/docker/android
         git clone https://github.com/moby/moby.git
         cd moby
-        git checkout 20.10
+        git checkout 24.0
         make binary
         sudo install -Dm 0700 bundles/binary-daemon/dockerd $PREFIX/bin/libexec/dockerd-dev
         sudo install -Dm 0700 bundles/binary-daemon/docker-init $PREFIX/bin/libexec/docker-init
