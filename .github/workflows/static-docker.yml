@@ -45,6 +45,7 @@ jobs:
         git checkout 20.10
         docker buildx bake --set binary.platform=linux/arm64 
         sudo install -Dm 0700 build/docker-linux-arm64 $PREFIX/bin/docker
+        
           
         
 
@@ -57,6 +58,10 @@ jobs:
         git checkout 20.10
         make binary
         sudo install -Dm 0700 bundles/binary-daemon/dockerd $PREFIX/bin/libexec/dockerd-dev
+        sudo install -Dm 0700 bundles/binary-daemon/docker-init $PREFIX/bin/libexec/docker-init
+        sudo install -Dm 0700 bundles/binary-daemon/docker-proxy $PREFIX/bin/libexec/docker-proxy
+        
+        
         
         
         
