@@ -1,4 +1,4 @@
-name: Build static llama
+name: Build android llama
 on:
   watch:
     types: [started]
@@ -43,7 +43,7 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
         export PREFIX=/data/llama
-        expoet ANDROID_NDK=$GITHUB_WORKSPACE/kernel_workspace/android-ndk-r28
+        export ANDROID_NDK=$GITHUB_WORKSPACE/kernel_workspace/android-ndk-r28
         git cone https://github.com/ggml-org/llama.cpp.git llama
         cd llama
         cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake \
