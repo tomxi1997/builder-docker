@@ -1,0 +1,74 @@
+name: Build static llama
+on:
+  watch:
+    types: [started]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build static docker by ${{ github.actor }}
+    runs-on: ubuntu-22.04
+    if: github.event.repository.owner.id == github.event.sender.id
+    env:
+      CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
+      CCACHE_NOHASHDIR: "true"
+      CCACHE_HARDLINK: "true"
+      CI: "false"
+    steps:
+    - uses: actions/checkout@v4
+    - name: Prepare Configuration
+      run: |
+        echo "ENABLE_NETHUNTER=$(cat $CONFIG_ENV | grep -w "ENABLE_NETHUNTER" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
+        
+    - name: Set swap to 10G
+      uses: pierotofy/set-swap-space@master
+      with:
+        swap-size-gb: 10
+
+    - name: Setup build environment
+      run: |
+        echo "BUILD_TIME=$(TZ=Asia/Shanghai date "+%Y%m%d%H%M")" >> $GITHUB_ENV
+        echo "DEVICE=$(echo ${{ env.KERNEL_CONFIG }} | sed 's!vendor/!!;s/_defconfig//;s/_user//;s/-perf//')" >> $GITHUB_ENV
+        sudo apt-get update
+        sudo apt install -y curl vim git gcc unzip wget make crossbuild-essential-amd64
+        mkdir -p $GITHUB_WORKSPACE/kernel_workspace
+        cd $GITHUB_WORKSPACE/kernel_workspace
+        wget https://dl.google.com/android/repository/android-ndk-r28-linux.zip
+        unzip android-ndk-r28-linux.zip
+
+  
+
+    - name: build android llama.cpp
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace
+        export PREFIX=/data/llama
+        expoet ANDROID_NDK=$GITHUB_WORKSPACE/kernel_workspace/android-ndk-r28
+        git cone https://github.com/ggml-org/llama.cpp.git llama
+        cd llama
+        cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake \
+                -DANDROID_ABI=arm64-v8a \
+                -DANDROID_PLATFORM=android-28 \
+                -DCMAKE_C_FLAGS="-march=armv8.7a" \
+                -DCMAKE_CXX_FLAGS="-march=armv8.7a" \
+                -DGGML_OPENMP=OFF \
+                -DGGML_LLAMAFILE=OFF \
+                -B build-android
+                
+        cmake --build build-android --config Release -j4
+        sudo cmake --install build-android --prefix $PREFIX --config Release
+        
+        
+        
+    - name: add llama tar
+      run: |
+        sudo bash -c 'cd /data && tar -czvf llama.tar.xz llama && cp llama.tar.xz /home/runner/work/builder-docker/builder-docker/kernel_workspace'
+    
+
+    - name: Upload llama
+      uses: actions/upload-artifact@v4
+      with:
+        name: llama-android28-arm64
+        path: kernel_workspace/llama.tar.xz
+
+  
