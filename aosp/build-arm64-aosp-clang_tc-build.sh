@@ -5,19 +5,21 @@
 #一下是最新版本的clang-r547379
 #https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+/refs/heads/main/clang-r547379
 #更个提交清单如下 https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+/refs/heads/main/clang-r547379/manifest_13065274.xml
-llvm_project_version=b718bcaf8c198c82f3021447d943401e3ab5bd54
+llvm_project_version=b3a530ec6537146650e42be89f1089e9a3588460
 
 binutils_version=
 
-toolchain_utils_version=a1bb7f26cc6b735c3d685db12739bb03ad9a2993
+toolchain_utils_version=760c253c1ed00ce9abd48f8546f08516e57485fe
 
-llvm_android_version=456a459bd653ddf1cca170e7e9aef9d122a81731
+llvm_android_version=43ef7af1325b43e13d926d74a89741d4ace5fcf8
 #svn值，请查看$PW/llvm_android/patches/PATCHES.json，按情况写
-svn_version=547379
+svn_version=536225
 
 
 #clang安装路径
-CV=clang-r547379
+CV=clang-r536225
+
+
 install_path=$GITHUB_WORKSPACE/kernel_workspace/$CV
 
 mkdir -p $GITHUB_WORKSPACE/kernel_workspace/aosp
