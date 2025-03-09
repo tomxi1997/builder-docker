@@ -30,9 +30,8 @@ jobs:
       run: |
         echo "BUILD_TIME=$(TZ=Asia/Shanghai date "+%Y%m%d%H%M")" >> $GITHUB_ENV
         echo "DEVICE=$(echo ${{ env.KERNEL_CONFIG }} | sed 's!vendor/!!;s/_defconfig//;s/_user//;s/-perf//')" >> $GITHUB_ENV
-        sudo apt-get remove containerd.io -y
         sudo apt-get update
-        sudo apt install -y docker.io git ca-certificates xz-utils 
+        sudo apt install -y git ca-certificates xz-utils 
         mkdir -p $GITHUB_WORKSPACE/kernel_workspace/artifact
 
   
@@ -40,7 +39,7 @@ jobs:
     - name: build base alpine linux docker img
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        git clone https://github.com/ziglang/qemu-static
+        git clone https://github.com/tomxi1997/qemu-static.git
         cd qemu-static
         docker build --tag qemu .
         
