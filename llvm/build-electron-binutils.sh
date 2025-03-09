@@ -15,6 +15,7 @@ export IN=$GITHUB_WORKSPACE/kernel_workspace/toolchain
 echo "正在下载binutils中"
 git clone https://github.com/bminor/binutils-gdb.git binutils
 cd binutils
+autoreconf -i
 echo "正在构建64位binutils中"
 mkdir build-binutils && cd build-binutils 
 env CFLAGS=-O2 CXXFLAGS=-O2 ../$BV/configure --prefix=$IN --target=aarch64-linux-gnu --disable-compressed-debug-sections --disable-gdb --disable-werror --enable-deterministic-archives --enable-new-dtags --enable-plugins --enable-threads --quiet --with-system-zlib --disable-multilib --disable-nls --with-gnu-as --with-gnu-ld --enable-gold --enable-ld=default --with-pkgversion="Electron Binutils"
