@@ -81,7 +81,7 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/
         XZ_OPT="-9" tar --warning=no-file-changed -cJf toolchain.tar.xz toolchain
-        rm -rf toolchain
+        
 
     - name: Upload toolchain
       uses: actions/upload-artifact@v4
