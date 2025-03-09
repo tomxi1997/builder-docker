@@ -62,11 +62,15 @@ jobs:
     - name: build toolchain
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
+        wget https://raw.githubusercontent.com/tomxi1997/builder-docker/main/llvm/build-electron-binutils.sh
+        chmod +x *.sh
+        ./build-electron-binutils.sh
+        cd $GITHUB_WORKSPACE/kernel_workspace
         git clone https://github.com/ClangBuiltLinux/tc-build
         cd tc-build
         chmod +x *.py
-        ./build-binutils.py --targets arm aarch64 -i $GITHUB_WORKSPACE/kernel_workspace/toolchain
-        ./build-llvm.py -t AArch64 ARM --vendor-string "PSA" -i $GITHUB_WORKSPACE/kernel_workspace/toolchain
+        #./build-binutils.py --targets arm aarch64 -i $GITHUB_WORKSPACE/kernel_workspace/toolchain
+        ./build-llvm.py -t AArch64 ARM --vendor-string "Electron" -i $GITHUB_WORKSPACE/kernel_workspace/toolchain
         
           
         
