@@ -55,7 +55,7 @@ jobs:
             u-boot-tools \
             xz-utils \
             zlib1g-dev
-         apt install -y pixz git libssl-dev gcc-arm-linux-gnueabi build-essential libncurses5-dev bzip2 make gcc g++ grep bc curl bison flex openssl lzop ccache unzip zlib1g-dev texinfo file ca-certificates ccache wget cmake texinfo zlib1g-dev xz-utils libelf-dev zip libgmp-dev xz-utils libncurses-dev g++ gawk m4 libtinfo5 cpio binutils-dev libelf-dev cmake texinfo python3
+         sudo apt install -y pixz git libssl-dev gcc-arm-linux-gnueabi build-essential libncurses5-dev bzip2 make gcc g++ grep bc curl bison flex openssl lzop ccache unzip zlib1g-dev texinfo file ca-certificates ccache wget cmake texinfo zlib1g-dev xz-utils libelf-dev zip libgmp-dev xz-utils libncurses-dev g++ gawk m4 libtinfo5 cpio binutils-dev libelf-dev cmake texinfo python3
          mkdir -p $GITHUB_WORKSPACE/kernel_workspace
 
   
