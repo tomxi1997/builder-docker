@@ -63,8 +63,8 @@ jobs:
     - name: build static box64
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
-        git clone https://github.com/ptitSeb/box64.git box64
-        cd box64
+        git clone https://github.com/ptitSeb/box64.git box641
+        cd box641
         mkdir build; cd build
         cmake .. -DSTATICBUILD=yes -D ARM64=1 -DCMAKE_C_COMPILER=gcc -DBAD_SIGNAL=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -DUSE_CCACHE=1 --install-prefix $GITHUB_WORKSPACE/kernel_workspace/box64
         make -j6
