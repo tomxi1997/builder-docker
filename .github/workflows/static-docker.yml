@@ -40,9 +40,9 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace
         export PREFIX=/data/docker/android
-        git clone https://github.com/tomxi1997/cli.git
+        git clone https://github.com/docker/cli
         cd cli
-        git checkout 24.0
+        git checkout 0442a73
         docker buildx bake --set binary.platform=linux/arm64 
         sudo install -Dm 0700 build/docker-linux-arm64 $PREFIX/bin/docker
         
@@ -53,9 +53,9 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/
         export PREFIX=/data/docker/android
-        git clone https://github.com/tomxi1997/moby.git
+        git clone https://github.com/moby/moby
         cd moby
-        git checkout 24.0
+        git checkout bea4de2
         make binary
         ls $GITHUB_WORKSPACE/kernel_workspace/moby/bundles/binary
         sudo install -Dm 0700 $GITHUB_WORKSPACE/kernel_workspace/moby/bundles/binary/dockerd $PREFIX/bin/dockerd-dev
