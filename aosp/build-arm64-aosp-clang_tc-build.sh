@@ -89,7 +89,10 @@ chmod +x *.py
 echo "……………………………………………………………………………………………………………………………………………………………………………………"
 echo "……………………………………………………………………………………………开始编译……………………………………………………………………………………"
 #./build-llvm.py -t AArch64 ARM --vendor-string "Aosp Arm" -i $install_path --no-update
-./build-llvm.py -t AArch64 ARM --clang-vendor "Aosp Arm" -i $install_path --no-update
+./build-llvm.py --clang-vendor "Aosp Arm" \
+	--targets "ARM;AArch64" \
+ --no-update \
+ --install-folder $install_path 
 
 
  
