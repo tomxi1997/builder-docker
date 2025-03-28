@@ -13,7 +13,7 @@ toolchain_utils_version=c9cb1157f1f9cc5cd081941ba83c8d63657160d0
 
 llvm_android_version=207c6bec0197283db14f4ab1b52c4f062aaa050e
 #svn值，请查看$PW/llvm_android/patches/PATCHES.json，按情况写
-svn_version=522817
+svn_version=450784
 
 
 #clang安装路径
