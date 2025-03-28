@@ -78,7 +78,9 @@ echo "………………………………………………………………�
 
 
 cd $GITHUB_WORKSPACE/kernel_workspace
-git clone https://github.com/ClangBuiltLinux/tc-build
+#git clone https://github.com/ClangBuiltLinux/tc-build
+wget https://github.com/tomxi1997/Toolchain-for-aarch64-hosts/releases/download/v15/tc-build.tar.xz
+tar xf tc-build.tar.xz
 cd tc-build
 mkdir src
 mv $PW/llvm-project  $GITHUB_WORKSPACE/kernel_workspace/tc-build/src/
