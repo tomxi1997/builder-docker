@@ -45,8 +45,7 @@ jobs:
         PATH=~/bin:$PATH
         curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
         sudo chmod a+x ~/bin/repo
-        repo init -u https://android.googlesource.com/platform/manifest -b llvm-toolchain 
-        repo sync -c -j4
+        repo init -u https://android.googlesource.com/platform/manifest -b llvm-toolchain && repo sync
         
         
         
