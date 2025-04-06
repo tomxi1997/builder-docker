@@ -1,0 +1,63 @@
+name: Download Aosp NDk sourcecode
+on:
+  watch:
+    types: [started]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build static docker by ${{ github.actor }}
+    runs-on: ubuntu-22.04
+    if: github.event.repository.owner.id == github.event.sender.id
+    env:
+      CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
+      CCACHE_NOHASHDIR: "true"
+      CCACHE_HARDLINK: "true"
+      CI: "false"
+    steps:
+    - uses: actions/checkout@v4
+    - name: Prepare Configuration
+      run: |
+        echo "ENABLE_NETHUNTER=$(cat $CONFIG_ENV | grep -w "ENABLE_NETHUNTER" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
+        
+    - name: Set swap to 10G
+      uses: pierotofy/set-swap-space@master
+      with:
+        swap-size-gb: 10
+
+    - name: Setup build environment
+      run: |
+        echo "BUILD_TIME=$(TZ=Asia/Shanghai date "+%Y%m%d%H%M")" >> $GITHUB_ENV
+        echo "DEVICE=$(echo ${{ env.KERNEL_CONFIG }} | sed 's!vendor/!!;s/_defconfig//;s/_user//;s/-perf//')" >> $GITHUB_ENV
+        sudo apt-get update
+        sudo apt install -y curl vim git gcc unzip wget make crossbuild-essential-amd64
+        mkdir -p $GITHUB_WORKSPACE/kernel_workspace/llvm-toolchain 
+       
+  
+
+    - name: build SYNC NDK
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace/llvm-toolchain
+        mkdir ~/bin
+        PATH=~/bin:$PATH
+        curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+        sudo chmod a+x ~/bin/repo
+        repo init -u https://android.googlesource.com/platform/manifest -b llvm-toolchain 
+        repo sync -c -j4
+        
+        
+        
+    - name: add llama tar
+      run: |
+        cd  $GITHUB_WORKSPACE/kernel_workspace/
+        XZ_OPT="-9" tar --warning=no-file-changed -cJf llvm-toolchain.tar.xz llvm-toolchain
+        sudo rm -rf lvm-toolchain
+
+    - name: Upload llama
+      uses: actions/upload-artifact@v4
+      with:
+        name: llvm-toolchain
+        path: kernel_workspace/llvm-toolchain.tar.xz
+
+  
