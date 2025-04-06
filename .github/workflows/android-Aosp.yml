@@ -39,6 +39,8 @@ jobs:
     - name: build SYNC NDK
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/llvm-toolchain
+        git config --global user.email "tomxi1997@gmail.com"
+        git config --global user.name "tonxi1997"
         mkdir ~/bin
         PATH=~/bin:$PATH
         curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
