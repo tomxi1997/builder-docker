@@ -56,7 +56,7 @@ jobs:
                 -DLLAMA_CURL=OFF -B build-android
                 
         cmake --build build-android -j --target llama-gemma3-cli --config Release -j4
-        sudo cmake --install build-android --prefix $PREFIX --config Release
+        sudo cmake --install build-android --prefix $PREFIX  -j --target llama-gemma3-cli --config Release
         
         
         
