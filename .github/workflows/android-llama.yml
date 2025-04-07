@@ -53,7 +53,7 @@ jobs:
                 -DCMAKE_CXX_FLAGS="-march=armv8.7a" \
                 -DGGML_OPENMP=OFF \
                 -DGGML_LLAMAFILE=OFF \
-                -B build-android
+                -DLLAMA_CURL=OFF -B build-android
                 
         cmake --build build-android --config Release -j4
         sudo cmake --install build-android --prefix $PREFIX --config Release
