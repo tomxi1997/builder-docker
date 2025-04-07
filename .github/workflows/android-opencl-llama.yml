@@ -67,18 +67,17 @@ jobs:
         export ANDROID_NDK=$GITHUB_WORKSPACE/kernel_workspace/android-ndk-r28
         git clone https://github.com/ggml-org/llama.cpp.git llama
         cd llama
-        cmake -G Ninja \
-                 -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake \
+        cmake -DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake \
                  -DANDROID_ABI=arm64-v8a \
-                 -DCMAKE_BUILD_TYPE=Release \
                  -DANDROID_PLATFORM=android-28 \
                  -DCMAKE_PREFIX_PATH="/data/llama" \
                  -DBUILD_SHARED_LIBS=OFF \
                  -DGGML_OPENCL=ON \
-                 -DLLAMA_CURL=OFF
+                 -DLLAMA_CURL=OFF \
+                 -B build-android
           
-        ninja   
-        ninja install 
+        cmake --build build-android --config Release -j4
+        sudo cmake --install build-android --prefix /data/llama --config Release
         
                
         
