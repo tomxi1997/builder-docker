@@ -31,7 +31,7 @@ jobs:
         echo "BUILD_TIME=$(TZ=Asia/Shanghai date "+%Y%m%d%H%M")" >> $GITHUB_ENV
         echo "DEVICE=$(echo ${{ env.KERNEL_CONFIG }} | sed 's!vendor/!!;s/_defconfig//;s/_user//;s/-perf//')" >> $GITHUB_ENV
         sudo apt-get update
-        sudo apt install -y curl vim git gcc unzip wget make crossbuild-essential-amd64 ninja cmake
+        sudo apt install -y curl vim git gcc unzip wget make crossbuild-essential-amd64 cmake ninja-build
         mkdir -p $GITHUB_WORKSPACE/kernel_workspace
         cd $GITHUB_WORKSPACE/kernel_workspace
         wget https://dl.google.com/android/repository/android-ndk-r28-linux.zip
