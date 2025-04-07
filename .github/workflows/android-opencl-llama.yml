@@ -91,7 +91,7 @@ jobs:
     - name: Upload llama
       uses: actions/upload-artifact@v4
       with:
-        name: llama-android28-arm64
+        name: OpenCL-llama-android28-arm64
         path: kernel_workspace/llama.tar.xz
 
   
