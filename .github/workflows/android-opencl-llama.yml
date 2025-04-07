@@ -74,7 +74,8 @@ jobs:
                  -DANDROID_PLATFORM=android-28 \
                  -DCMAKE_PREFIX_PATH="/data/llama" \
                  -DBUILD_SHARED_LIBS=OFF \
-                 -DGGML_OPENCL=ON
+                 -DGGML_OPENCL=ON \
+                 -DLLAMA_CURL=OFF
           
         ninja   
         ninja install 
