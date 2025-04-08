@@ -62,8 +62,7 @@ jobs:
         
     - name: add llama tar
       run: |
-        sudo bash -c 'cd /data && tar -czvf llama.tar.xz llama && cp llama.tar.xz /home/runner/work/builder-docker/builder-docker/kernel_workspace'
-    
+        sudo bash -c 'cd /data && XZ_OPT="-9" tar --warning=no-file-changed -cJf llama.tar.xz llama && cp llama.tar.xz /home/runner/work/builder-docker/builder-docker/kernel_workspace'
 
     - name: Upload llama
       uses: actions/upload-artifact@v4
