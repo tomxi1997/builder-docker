@@ -79,7 +79,7 @@ jobs:
         cmake --build build-android --config Release -j4
         sudo cmake --install build-android --prefix /data/llama --config Release
         sudo cp $ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/aarch64-linux-android/libOpenCL.so /data/llama/lib/
-        
+        sudo chmod 644 /data/llama/lib/libOpenCL.so
                
         
         
