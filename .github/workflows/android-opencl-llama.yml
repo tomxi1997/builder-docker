@@ -73,7 +73,7 @@ jobs:
                  -DCMAKE_PREFIX_PATH="/data/llama" \
                  -DBUILD_SHARED_LIBS=OFF \
                  -DGGML_OPENCL=ON \
-                 -DLLAMA_CURL=OFF \
+                 -DLLAMA_CURL=OFF -DGGML_OPENMP=OFF -DGGML_LLAMAFILE=OFF \
                  -B build-android
           
         cmake --build build-android --config Release -j4
