@@ -70,8 +70,8 @@ jobs:
         git clone https://github.com/ClangBuiltLinux/tc-build
         cd tc-build
         chmod +x *.py
-        #./build-binutils.py --targets arm aarch64 -i $GITHUB_WORKSPACE/kernel_workspace/toolchain
-         sudo ./build-llvm.py -t AArch64 ARM --vendor-string "Electron" -i $GITHUB_WORKSPACE/kernel_workspace/toolchain
+        ./build-binutils.py --targets arm aarch64 -i $GITHUB_WORKSPACE/kernel_workspace/toolchain
+        sudo ./build-llvm.py -t AArch64 ARM --vendor-string "Electron" -i $GITHUB_WORKSPACE/kernel_workspace/toolchain
         
           
         
