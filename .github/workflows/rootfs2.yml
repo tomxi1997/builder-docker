@@ -1,4 +1,4 @@
-name: 构建全量Linux发行版arm64 RootFS
+name: 构建arm64 RootFS
 
 on:
   push:
@@ -18,111 +18,111 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Debian系
+          # Debian系（全部替换为官方源）
           - name: debian
             type: debian-like
             release: bookworm
-            mirror: "http://mirrors.ustc.edu.cn/debian-ports/"
-            gpg_key: "https://mirrors.ustc.edu.cn/debian-ports/archive-key.gpg"
+            mirror: "http://deb.debian.org/debian-ports/"  # Debian官方arm64源
+            gpg_key: "http://deb.debian.org/debian-ports/archive-key.gpg"  # Debian官方GPG
           - name: ubuntu
             type: debian-like
             release: jammy
-            mirror: "http://mirrors.ustc.edu.cn/ubuntu-ports/"
-            gpg_key: "https://mirrors.ustc.edu.cn/ubuntu-ports/archive-key-2025.gpg"
+            mirror: "http://ports.ubuntu.com/ubuntu-ports/"  # Ubuntu官方arm64源
+            gpg_key: "http://ports.ubuntu.com/ubuntu-ports/dists/jammy/Release.gpg"  # Ubuntu官方GPG
           - name: deepin
             type: debian-like
             release: apricot
-            mirror: "http://mirrors.ustc.edu.cn/deepin-ports/"
-            gpg_key: "https://mirrors.ustc.edu.cn/deepin-ports/archive-key.gpg"
+            mirror: "http://packages.deepin.com/deepin-ports/"  # Deepin官方arm64源
+            gpg_key: "http://packages.deepin.com/deepin-ports/archive-key.gpg"  # Deepin官方GPG
           - name: openkylin
             type: debian-like
             release: 1.0
-            mirror: "http://mirrors.ustc.edu.cn/openkylin/ports/"
-            gpg_key: "https://mirrors.ustc.edu.cn/openkylin/ports/archive-key.gpg"
+            mirror: "http://repo.openkylin.top/openkylin/ports/"  # 开放麒麟官方arm64源
+            gpg_key: "http://repo.openkylin.top/openkylin/ports/archive-key.gpg"  # 开放麒麟官方GPG
           - name: kali
             type: debian-like
             release: kali-rolling
-            mirror: "http://mirrors.ustc.edu.cn/kali-ports/"
-            gpg_key: "https://mirrors.ustc.edu.cn/kali-ports/archive-key.asc"
+            mirror: "http://http.kali.org/kali-ports/"  # Kali官方arm64源
+            gpg_key: "http://http.kali.org/kali-ports/archive-key.asc"  # Kali官方GPG
           - name: parrot
             type: debian-like
             release: rolling
-            mirror: "http://mirrors.ustc.edu.cn/parrot-ports/"
-            gpg_key: "https://mirrors.ustc.edu.cn/parrot-ports/archive-key.asc"
+            mirror: "http://deb.parrot.sh/parrot-ports/"  # Parrot官方arm64源
+            gpg_key: "http://deb.parrot.sh/parrot-ports/archive-key.asc"  # Parrot官方GPG
           - name: backbox
             type: debian-like
             release: 7
-            mirror: "http://mirrors.ustc.edu.cn/backbox-ports/7/"
-            gpg_key: "https://mirrors.ustc.edu.cn/backbox-ports/archive-key.asc"
-          # Arch系
+            mirror: "http://repo.backbox.org/backbox-ports/7/"  # BackBox官方arm64源
+            gpg_key: "http://repo.backbox.org/backbox-ports/archive-key.asc"  # BackBox官方GPG
+          # Arch系（全部替换为官方源）
           - name: arch
             type: arch-like
             release: aarch64
-            mirror: "https://mirrors.tuna.tsinghua.edu.cn/archlinuxarm/$repo/$arch"
+            mirror: "http://mirror.archlinuxarm.org/$repo/$arch"  # ArchARM官方源
             gpg_key: ""
           - name: manjaro
             type: arch-like
             release: aarch64-unstable
-            mirror: "https://mirrors.tuna.tsinghua.edu.cn/manjaro-arm/$repo/$arch"
+            mirror: "http://repo.manjaro.org/$repo/$arch"  # Manjaro官方arm64源
             gpg_key: ""
           - name: artix
             type: arch-like
             release: aarch64
-            mirror: "https://mirrors.tuna.tsinghua.edu.cn/artix-linux/$repo/$arch"
+            mirror: "http://repo.artixlinux.org/$repo/$arch"  # Artix官方arm64源
             gpg_key: ""
-          # RHEL/Fedora系
+          # RHEL/Fedora系（全部替换为官方源）
           - name: fedora
             type: rhel-like
             release: 40
-            mirror: "http://mirrors.ustc.edu.cn/fedora-secondary/releases/$release/Everything/aarch64/os/"
-            gpg_key: "https://getfedora.org/static/fedora.gpg"
+            mirror: "http://download.fedoraproject.org/pub/fedora-secondary/releases/$release/Everything/aarch64/os/"  # Fedora官方arm64源
+            gpg_key: "https://getfedora.org/static/fedora.gpg"  # Fedora官方GPG
           - name: centos_stream
             type: rhel-like
             release: 9
-            mirror: "http://mirrors.ustc.edu.cn/centos-stream/$release-stream/BaseOS/aarch64/os/"
-            gpg_key: "https://mirrors.ustc.edu.cn/centos-stream/RPM-GPG-KEY-CentOS-Stream-9"
+            mirror: "http://mirror.centos.org/centos-stream/$release-stream/BaseOS/aarch64/os/"  # CentOS Stream官方arm64源
+            gpg_key: "https://www.centos.org/keys/RPM-GPG-KEY-CentOS-Stream-9"  # CentOS Stream官方GPG
           - name: rocky
             type: rhel-like
             release: 9
-            mirror: "http://mirrors.ustc.edu.cn/rocky/$release/BaseOS/aarch64/os/"
-            gpg_key: "https://mirrors.ustc.edu.cn/rocky/RPM-GPG-KEY-rockyofficial"
-          # SUSE系
+            mirror: "http://download.rockylinux.org/pub/rocky/$release/BaseOS/aarch64/os/"  # Rocky官方arm64源
+            gpg_key: "https://dl.rockylinux.org/pub/rocky/RPM-GPG-KEY-rockyofficial"  # Rocky官方GPG
+          # SUSE系（替换为官方源）
           - name: opensuse
             type: suse-like
             release: tumbleweed
-            mirror: "http://mirrors.ustc.edu.cn/opensuse/ports/tumbleweed/repo/oss/aarch64/"
-            gpg_key: "https://mirrors.ustc.edu.cn/opensuse/ports/tumbleweed/repo/oss/aarch64/repodata/repomd.xml.key"
-          # Alpine系
+            mirror: "http://download.opensuse.org/ports/tumbleweed/repo/oss/aarch64/"  # openSUSE官方arm64源
+            gpg_key: "http://download.opensuse.org/ports/tumbleweed/repo/oss/aarch64/repodata/repomd.xml.key"  # openSUSE官方GPG
+          # Alpine系（全部替换为官方源）
           - name: alpine
             type: alpine-like
             release: 3.20
-            mirror: "http://mirrors.tuna.tsinghua.edu.cn/alpine/v$release/main/"
+            mirror: "http://dl-cdn.alpinelinux.org/alpine/v$release/main/"  # Alpine官方arm64源
             gpg_key: ""
           - name: adelie
             type: alpine-like
             release: 1.0
-            mirror: "http://mirrors.ustc.edu.cn/adelie/os/aarch64/main/"
-            gpg_key: "https://adelielinux.org/keys/adelie-devel.asc"
-          # 独立系
+            mirror: "http://ftp.adelielinux.org/adelie/os/aarch64/main/"  # Adelie官方arm64源
+            gpg_key: "https://adelielinux.org/keys/adelie-devel.asc"  # Adelie官方GPG
+          # 独立系（全部替换为官方源）
           - name: void
             type: void-like
             release: current
-            mirror: "https://mirrors.tuna.tsinghua.edu.cn/voidlinux/current/aarch64/"
-            gpg_key: "https://mirrors.tuna.tsinghua.edu.cn/voidlinux/void-release-20240120.pub"
+            mirror: "http://repo.voidlinux.org/current/aarch64/"  # Void官方arm64源
+            gpg_key: "https://voidlinux.org/keys/void-release-20240120.pub"  # Void官方GPG
           - name: pardus
             type: pardus-like
             release: 23
-            mirror: "http://mirrors.ustc.edu.cn/pardus-archive/23/aarch64/main/"
-            gpg_key: "https://pardus.org.tr/keys/pardus-23.gpg"
+            mirror: "http://depo.pardus.org.tr/pardus-archive/23/aarch64/main/"  # Pardus官方arm64源
+            gpg_key: "https://pardus.org.tr/keys/pardus-23.gpg"  # Pardus官方GPG
           - name: chimera
             type: chimera-like
             release: 1.0
-            mirror: "http://mirrors.ustc.edu.cn/chimeraos/repo/aarch64/"
-            gpg_key: "https://chimeraos.org/gpg.pub"
+            mirror: "http://repo.chimeraos.org/chimeraos/repo/aarch64/"  # ChimeraOS官方arm64源
+            gpg_key: "https://chimeraos.org/gpg.pub"  # ChimeraOS官方GPG
           - name: gentoo
             type: gentoo-like
             release: stage3
-            mirror: "http://mirrors.ustc.edu.cn/gentoo/releases/aarch64/autobuilds/current-stage3-arm64-desktop-systemd/"
+            mirror: "http://distfiles.gentoo.org/releases/aarch64/autobuilds/current-stage3-arm64-desktop-systemd/"  # Gentoo官方arm64源
             gpg_key: ""
 
     steps:
@@ -131,36 +131,36 @@ jobs:
         with:
           fetch-depth: 1
 
-      # -------------------------- 核心修复：依赖安装步骤（删除basestrap，手动下载Artix静态版） --------------------------
+      # 依赖安装：恢复Ubuntu官方源（移除镜像加速）
       - name: Install core dependencies
         run: |
           set -euo pipefail
-          # 替换Ubuntu源为USTC，加速下载
-          sudo sed -i 's@http://archive.ubuntu.com/ubuntu/@http://mirrors.ustc.edu.cn/ubuntu/@g' /etc/apt/sources.list
-          sudo apt update -y || { echo "❌ APT更新失败（检查网络或镜像）"; exit 1; }
+          # 恢复Ubuntu默认官方源（不再使用第三方镜像）
+          sudo sed -i 's@http://mirrors.ustc.edu.cn/ubuntu/@http://archive.ubuntu.com/ubuntu/@g' /etc/apt/sources.list
+          sudo apt update -y || { echo "❌ APT更新失败（检查Ubuntu官方源连接）"; exit 1; }
           
-          # 关键修改：删除basestrap（Ubuntu源无此包），保留其他必要依赖
+          # 安装核心依赖（不含basestrap）
           sudo apt install -y \
             debootstrap arch-install-scripts \
             xz-utils tar gzip wget curl \
             qemu-user-static binfmt-support \
             dnf zypper || { echo "❌ 核心依赖安装失败"; exit 1; }
           
-          # 关键修复：手动下载Artix的静态版basestrap（解决Ubuntu无basestrap的问题）
+          # 手动下载Artix官方静态版basestrap（Artix官方源）
           sudo wget -O /usr/bin/basestrap \
-            https://mirrors.tuna.tsinghua.edu.cn/artix-linux/iso/2024.05.01/artix-base-aarch64/rootfs/usr/bin/basestrap \
-            || { echo "❌ Artix basestrap下载失败"; exit 1; }
-          sudo chmod +x /usr/bin/basestrap  # 赋予执行权限
+            https://repo.artixlinux.org/iso/2024.05.01/artix-base-aarch64/rootfs/usr/bin/basestrap \
+            || { echo "❌ Artix basestrap下载失败（检查Artix官方源）"; exit 1; }
+          sudo chmod +x /usr/bin/basestrap
           
-          # 手动下载Void的xbps-install静态版
+          # 手动下载Void官方静态版xbps-install（Void官方源）
           sudo wget -O /usr/bin/xbps-install \
-            https://mirrors.tuna.tsinghua.edu.cn/voidlinux/current/aarch64/static/xbps-install.static \
-            || { echo "❌ Void xbps-install下载失败"; exit 1; }
+            https://repo.voidlinux.org/current/aarch64/static/xbps-install.static \
+            || { echo "❌ Void xbps-install下载失败（检查Void官方源）"; exit 1; }
           sudo chmod +x /usr/bin/xbps-install
           
           # 注册QEMU-aarch64模拟
           sudo update-binfmts --enable qemu-aarch64 || { echo "❌ QEMU-aarch64注册失败"; exit 1; }
-          echo "✅ 核心依赖安装完成（含Artix basestrap和Void xbps-install）"
+          echo "✅ 核心依赖安装完成（全部使用官方源）"
 
       - name: Init build env
         run: |
@@ -205,8 +205,8 @@ jobs:
 
           import_gpg() {
             if [ -n "$1" ] && [ "$1" != "null" ]; then
-              echo "🔑 导入GPG密钥：$1"
-              sudo curl -fsSL "$1" -o /tmp/distro.gpg || error_exit "GPG密钥下载失败"
+              echo "🔑 导入官方GPG密钥：$1"
+              sudo curl -fsSL "$1" -o /tmp/distro.gpg || error_exit "GPG密钥下载失败（检查官方源）"
               if [[ "$DISTRO_TYPE" =~ "debian-like" || "$DISTRO_TYPE" =~ "alpine-like" ]]; then
                 sudo gpg --dearmor -o "/etc/apt/trusted.gpg.d/${DISTRO_NAME}.gpg" /tmp/distro.gpg \
                   || error_exit "GPG密钥转换失败（Debian/Alpine系）"
@@ -216,43 +216,46 @@ jobs:
             fi
           }
 
+          # Debian系构建（使用官方源）
           if [ "$DISTRO_TYPE" = "debian-like" ]; then
-            echo "🚀 开始构建 Debian系：$DISTRO_NAME $DISTRO_RELEASE (arm64)"
+            echo "🚀 开始构建 Debian系：$DISTRO_NAME $DISTRO_RELEASE (arm64) [官方源]"
             import_gpg "$DISTRO_GPG"
             sudo debootstrap --arch=arm64 --foreign "$DISTRO_RELEASE" "$ROOTFS_MOUNT" "$DISTRO_MIRROR" \
-              || error_exit "debootstrap第一阶段失败"
+              || error_exit "debootstrap第一阶段失败（检查Debian系官方源）"
             sudo cp /usr/bin/qemu-aarch64-static "$ROOTFS_MOUNT/usr/bin/" \
               || error_exit "QEMU-aarch64复制失败"
             sudo chroot "$ROOTFS_MOUNT" /debootstrap/debootstrap --second-stage \
-              || error_exit "debootstrap第二阶段失败"
+              || error_exit "debootstrap第二阶段失败（QEMU模拟异常）"
             sudo chroot "$ROOTFS_MOUNT" apt clean || error_exit "APT缓存清理失败"
             sudo rm -rf "$ROOTFS_MOUNT/var/lib/apt/lists/*" || true
           fi
 
+          # Arch系构建（使用官方源）
           if [ "$DISTRO_TYPE" = "arch-like" ]; then
-            echo "🚀 开始构建 Arch系：$DISTRO_NAME $DISTRO_RELEASE (arm64)"
+            echo "🚀 开始构建 Arch系：$DISTRO_NAME $DISTRO_RELEASE (arm64) [官方源]"
             echo "Server = $DISTRO_MIRROR" | sudo tee /etc/pacman.d/mirrorlist \
-              || error_exit "镜像源配置失败"
+              || error_exit "镜像源配置失败（检查Arch系官方源）"
             sudo pacman-key --init || error_exit "Pacman密钥环初始化失败"
             if [ "$DISTRO_NAME" = "artix" ]; then
-              sudo pacman-key --populate artix || error_exit "Artix密钥导入失败"
-              # 使用手动下载的basestrap构建Artix
+              sudo pacman-key --populate artix || error_exit "Artix官方密钥导入失败"
               sudo basestrap -C /etc/pacman.conf -K --arch=aarch64 "$ROOTFS_MOUNT" base \
-                || error_exit "basestrap构建失败"
+                || error_exit "basestrap构建失败（检查Artix官方源）"
             else
+              sudo pacman-key --populate archlinuxarm || error_exit "ArchARM官方密钥导入失败"
               sudo pacstrap -C /etc/pacman.conf -K --arch=aarch64 "$ROOTFS_MOUNT" base \
-                || error_exit "pacstrap构建失败"
+                || error_exit "pacstrap构建失败（检查Arch系官方源）"
             fi
             sudo chroot "$ROOTFS_MOUNT" pacman -Scc --noconfirm || error_exit "Pacman缓存清理失败"
           fi
 
+          # RHEL系构建（使用官方源）
           if [ "$DISTRO_TYPE" = "rhel-like" ]; then
-            echo "🚀 开始构建 RHEL系：$DISTRO_NAME $DISTRO_RELEASE (arm64)"
+            echo "🚀 开始构建 RHEL系：$DISTRO_NAME $DISTRO_RELEASE (arm64) [官方源]"
             import_gpg "$DISTRO_GPG"
             if [ "$DISTRO_NAME" = "fedora" ]; then
               sudo tee "$ROOTFS_MOUNT/etc/yum.repos.d/fedora.repo" << EOF_REPO
               [fedora]
-              name=Fedora $DISTRO_RELEASE - aarch64
+              name=Fedora $DISTRO_RELEASE - aarch64 (官方源)
               baseurl=$DISTRO_MIRROR
               gpgcheck=1
               gpgkey=$DISTRO_GPG
@@ -260,7 +263,7 @@ jobs:
             else
               sudo tee "$ROOTFS_MOUNT/etc/yum.repos.d/${DISTRO_NAME}.repo" << EOF_REPO
               [baseos]
-              name=${DISTRO_NAME^} $DISTRO_RELEASE - BaseOS (aarch64)
+              name=${DISTRO_NAME^} $DISTRO_RELEASE - BaseOS (aarch64) [官方源]
               baseurl=$DISTRO_MIRROR
               gpgcheck=1
               gpgkey=$DISTRO_GPG
@@ -268,25 +271,27 @@ jobs:
             fi
             sudo dnf --installroot="$ROOTFS_MOUNT" --releasever="$DISTRO_RELEASE" \
               --forcearch=aarch64 --nogpgcheck install -y basesystem \
-              || error_exit "DNF构建失败"
+              || error_exit "DNF构建失败（检查RHEL系官方源）"
             sudo dnf --installroot="$ROOTFS_MOUNT" clean all || error_exit "DNF缓存清理失败"
           fi
 
+          # SUSE系构建（使用官方源）
           if [ "$DISTRO_TYPE" = "suse-like" ]; then
-            echo "🚀 开始构建 SUSE系：$DISTRO_NAME $DISTRO_RELEASE (arm64)"
+            echo "🚀 开始构建 SUSE系：$DISTRO_NAME $DISTRO_RELEASE (arm64) [官方源]"
             import_gpg "$DISTRO_GPG"
             sudo rpm --root "$ROOTFS_MOUNT" --initdb || error_exit "RPM数据库初始化失败"
-            sudo zypper addrepo -f -n "OpenSUSE $DISTRO_RELEASE" "$DISTRO_MIRROR" opensuse-repo \
-              || error_exit "ZYPPER源添加失败"
+            sudo zypper addrepo -f -n "OpenSUSE $DISTRO_RELEASE (官方源)" "$DISTRO_MIRROR" opensuse-repo \
+              || error_exit "ZYPPER源添加失败（检查openSUSE官方源）"
             sudo zypper --installroot="$ROOTFS_MOUNT" refresh || error_exit "ZYPPER源刷新失败"
             sudo zypper --installroot="$ROOTFS_MOUNT" --arch=aarch64 \
               install -y --no-recommends patterns-base-base \
-              || error_exit "ZYPPER构建失败"
+              || error_exit "ZYPPER构建失败（检查openSUSE官方源）"
             sudo zypper --installroot="$ROOTFS_MOUNT" clean -a || error_exit "ZYPPER缓存清理失败"
           fi
 
+          # Alpine系构建（使用官方源）
           if [ "$DISTRO_TYPE" = "alpine-like" ]; then
-            echo "🚀 开始构建 Alpine系：$DISTRO_NAME $DISTRO_RELEASE (arm64)"
+            echo "🚀 开始构建 Alpine系：$DISTRO_NAME $DISTRO_RELEASE (arm64) [官方源]"
             import_gpg "$DISTRO_GPG"
             wget -O /tmp/alpine-make-rootfs \
               https://raw.githubusercontent.com/alpinelinux/alpine-make-rootfs/master/alpine-make-rootfs \
@@ -295,33 +300,35 @@ jobs:
             if [ "$DISTRO_NAME" = "adelie" ]; then
               sudo /tmp/alpine-make-rootfs -a aarch64 -s "$DISTRO_MIRROR" \
                 -k "$DISTRO_GPG" "$ROOTFS_NAME" "$DISTRO_RELEASE" \
-                || error_exit "Adelie构建失败"
+                || error_exit "Adelie构建失败（检查Adelie官方源）"
             else
               sudo /tmp/alpine-make-rootfs -a aarch64 -s "$DISTRO_MIRROR" \
                 "$ROOTFS_NAME" "$DISTRO_RELEASE" \
-                || error_exit "Alpine构建失败"
+                || error_exit "Alpine构建失败（检查Alpine官方源）"
             fi
-            echo "✅ $DISTRO_NAME 构建完成"
+            echo "✅ $DISTRO_NAME 构建完成（官方源）"
             exit 0
           fi
 
+          # Void构建（使用官方源）
           if [ "$DISTRO_TYPE" = "void-like" ]; then
-            echo "🚀 开始构建 Void：$DISTRO_RELEASE (arm64)"
+            echo "🚀 开始构建 Void：$DISTRO_RELEASE (arm64) [官方源]"
             import_gpg "$DISTRO_GPG"
             sudo xbps-install -S -r "$ROOTFS_MOUNT" -R "$DISTRO_MIRROR" \
               --arch=aarch64 base-system \
-              || error_exit "xbps-install构建失败"
+              || error_exit "xbps-install构建失败（检查Void官方源）"
             sudo xbps-remove -r "$ROOTFS_MOUNT" -O || error_exit "Void缓存清理失败"
           fi
 
+          # Pardus构建（使用官方源）
           if [ "$DISTRO_TYPE" = "pardus-like" ]; then
-            echo "🚀 开始构建 Pardus：$DISTRO_RELEASE (arm64)"
+            echo "🚀 开始构建 Pardus：$DISTRO_RELEASE (arm64) [官方源]"
             import_gpg "$DISTRO_GPG"
             sudo tee "$ROOTFS_MOUNT/etc/apt/sources.list" << EOF_REPO
-            deb $DISTRO_MIRROR /
+            deb $DISTRO_MIRROR /  # Pardus官方源
             EOF_REPO
             sudo debootstrap --arch=arm64 --foreign "$DISTRO_RELEASE" "$ROOTFS_MOUNT" "$DISTRO_MIRROR" \
-              || error_exit "Pardus debootstrap第一阶段失败"
+              || error_exit "Pardus debootstrap第一阶段失败（检查Pardus官方源）"
             sudo cp /usr/bin/qemu-aarch64-static "$ROOTFS_MOUNT/usr/bin/" \
               || error_exit "QEMU复制失败"
             sudo chroot "$ROOTFS_MOUNT" /debootstrap/debootstrap --second-stage \
@@ -329,27 +336,29 @@ jobs:
             sudo chroot "$ROOTFS_MOUNT" apt clean || error_exit "Pardus APT清理失败"
           fi
 
+          # Chimera构建（使用官方源）
           if [ "$DISTRO_TYPE" = "chimera-like" ]; then
-            echo "🚀 开始构建 Chimera：$DISTRO_RELEASE (arm64)"
+            echo "🚀 开始构建 Chimera：$DISTRO_RELEASE (arm64) [官方源]"
             import_gpg "$DISTRO_GPG"
             sudo apk --root "$ROOTFS_MOUNT" add --initdb || error_exit "APK数据库初始化失败"
             sudo mkdir -p "$ROOTFS_MOUNT/etc/apk"
             sudo tee "$ROOTFS_MOUNT/etc/apk/repositories" << EOF_REPO
-            $DISTRO_MIRROR
+            $DISTRO_MIRROR  # ChimeraOS官方源
             EOF_REPO
             sudo apk --root "$ROOTFS_MOUNT" --arch aarch64 add base \
-              || error_exit "Chimera APK安装失败"
+              || error_exit "Chimera APK安装失败（检查Chimera官方源）"
             sudo apk --root "$ROOTFS_MOUNT" cache clean || error_exit "Chimera APK清理失败"
           fi
 
+          # Gentoo构建（使用官方源）
           if [ "$DISTRO_TYPE" = "gentoo-like" ]; then
-            echo "🚀 开始构建 Gentoo：$DISTRO_RELEASE (arm64)"
+            echo "🚀 开始构建 Gentoo：$DISTRO_RELEASE (arm64) [官方源]"
             STAGE3_URL=$(curl -fsSL "$DISTRO_MIRROR" | \
               grep -oE 'href="stage3-arm64-desktop-systemd-[0-9]{8}-[0-9]+\.tar\.xz"' | \
               head -n1 | sed 's/href="//;s/"//')
-            [ -z "$STAGE3_URL" ] && error_exit "未找到Gentoo Stage3 aarch64镜像"
+            [ -z "$STAGE3_URL" ] && error_exit "未找到Gentoo官方Stage3 aarch64镜像"
             sudo wget -O /tmp/gentoo-stage3.tar.xz "$DISTRO_MIRROR/$STAGE3_URL" \
-              || error_exit "Gentoo Stage3下载失败"
+              || error_exit "Gentoo Stage3下载失败（检查Gentoo官方源）"
             sudo tar -xJf /tmp/gentoo-stage3.tar.xz -C "$ROOTFS_MOUNT" \
               || error_exit "Gentoo Stage3解压失败"
             sudo tee "$ROOTFS_MOUNT/etc/portage/make.conf" << EOF
@@ -359,30 +368,32 @@ jobs:
             EOF
           fi
 
-          echo "📦 压缩RootFS产物..."
+          # 统一压缩RootFS
+          echo "📦 压缩RootFS产物（官方源构建）..."
           sudo tar -cJf "$ROOTFS_NAME" -C "$ROOTFS_MOUNT" . \
             || error_exit "RootFS压缩失败"
           sudo chown "$USER:$USER" "$ROOTFS_NAME" || error_exit "产物权限修正失败"
 
+          # 清理环境
           if [ "$DEBUG_MODE" = "false" ]; then
             sudo umount -l "$ROOTFS_MOUNT" 2>/dev/null || true
             sudo rm -rf "$ROOTFS_MOUNT" /tmp/*.gpg /tmp/gentoo-stage3.tar.xz /tmp/alpine-make-rootfs
           fi
 
-          echo -e "\033[32m✅ $DISTRO_NAME 构建完成！产物：$ROOTFS_NAME\033[0m"
+          echo -e "\033[32m✅ $DISTRO_NAME 构建完成！产物：$ROOTFS_NAME（全部使用官方源）\033[0m"
           EOF
           chmod +x build.sh || { echo "❌ 构建脚本权限设置失败"; exit 1; }
-          echo "✅ 构建脚本生成完成"
+          echo "✅ 构建脚本生成完成（官方源配置）"
 
       - name: Build arm64 RootFS
         run: |
           set -euo pipefail
           echo "📄 构建脚本内容："
           cat build.sh
-          echo -e "\n🚀 开始执行构建..."
+          echo -e "\n🚀 开始执行构建（全部使用官方源）..."
           ./build.sh "${{ env.ROOTFS_NAME }}" "${{ env.ROOTFS_MOUNT }}" || {
             echo -e "\033[31m❌ ${{ matrix.name }} 构建失败！排查方向：\033[0m"
-            echo "  1. 镜像源是否支持arm64  2. GPG密钥有效性  3. 磁盘空间"
+            echo "  1. 发行版官方源是否支持arm64  2. 官方GPG密钥是否有效  3. 网络是否能访问官方源"
             exit 1
           }
 
@@ -396,11 +407,11 @@ jobs:
           if [ "$FILE_SIZE" -lt "$MIN_SIZE" ]; then
             echo -e "\033[31m❌ 产物无效（<10MB）\033[0m"; exit 1;
           fi
-          echo "🔍 测试产物完整性..."
+          echo "🔍 测试产物完整性（官方源构建）..."
           head -c 102400 "$ROOTFS_PATH" | xz -t >/dev/null 2>&1 || {
             echo -e "\033[31m❌ 产物损坏\033[0m"; exit 1;
           }
-          echo -e "\033[32m✅ 产物验证通过！\033[0m"
+          echo -e "\033[32m✅ 产物验证通过！（官方源构建）\033[0m"
 
       - name: Create GitHub Release
         id: create_release
@@ -409,7 +420,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: arm64-rootfs-${{ matrix.name }}-${{ matrix.release }}-${{ format('{0:YYYYMMdd}', github.run_started_at) }}
-          release_name: "arm64 RootFS | ${{ matrix.name }} ${{ matrix.release }} (${{ format('{0:YYYY-MM-dd}', github.run_started_at) }})"
+          release_name: "arm64 RootFS | ${{ matrix.name }} ${{ matrix.release }} (${{ format('{0:YYYY-MM-dd}', github.run_started_at) }}) [官方源]"
           draft: false
           prerelease: false
 
@@ -422,4 +433,3 @@ jobs:
           asset_path: ./${{ env.ROOTFS_NAME }}
           asset_name: ${{ env.ROOTFS_NAME }}
           asset_content_type: application/x-xz
-
