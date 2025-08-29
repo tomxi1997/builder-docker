@@ -6,6 +6,9 @@ on:
       - '.github/workflows/rootfs.yml'
       - 'Dockerfile.*'
   workflow_dispatch:
+permissions:
+  contents: write  #
+  actions: read    
 jobs:
   build-ubuntu:
     runs-on: ubuntu-latest
