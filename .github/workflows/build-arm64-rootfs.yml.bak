@@ -1,0 +1,85 @@
+name: Build ARM64 Linux RootFS (With CN Mirrors)
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - '.github/workflows/build-arm64-rootfs.yml'
+      - 'Dockerfile.*'
+  workflow_dispatch:
+
+env:
+  OUTPUT_DIR: ./rootfs-output
+  UBUNTU_VERSION: 22.04
+  DEBIAN_VERSION: 12
+  ALPINE_VERSION: 3.19
+  ARCHARM_ARCH: aarch64
+
+jobs:
+  build-rootfs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU for ARM64 emulation
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Create output directory
+        run: mkdir -p ${{ env.OUTPUT_DIR }}
+
+      # 构建各发行版 RootFS（国内镜像已在 Dockerfile 中集成）
+      - name: Build Ubuntu ${{ env.UBUNTU_VERSION }} ARM64 RootFS
+        run: |
+          docker build --platform linux/arm64 -t ubuntu-arm64-rootfs -f Dockerfile.ubuntu .
+          CONTAINER_ID=$(docker run -d --platform linux/arm64 ubuntu-arm64-rootfs sleep infinity)
+          docker export $CONTAINER_ID | gzip > ${{ env.OUTPUT_DIR }}/ubuntu-${{ env.UBUNTU_VERSION }}-arm64-rootfs.tar.gz
+          docker stop $CONTAINER_ID && docker rm $CONTAINER_ID
+
+      - name: Build Debian ${{ env.DEBIAN_VERSION }} ARM64 RootFS
+        run: |
+          docker build --platform linux/arm64 -t debian-arm64-rootfs -f Dockerfile.debian .
+          CONTAINER_ID=$(docker run -d --platform linux/arm64 debian-arm64-rootfs sleep infinity)
+          docker export $CONTAINER_ID | gzip > ${{ env.OUTPUT_DIR }}/debian-${{ env.DEBIAN_VERSION }}-arm64-rootfs.tar.gz
+          docker stop $CONTAINER_ID && docker rm $CONTAINER_ID
+
+      - name: Build Alpine ${{ env.ALPINE_VERSION }} ARM64 RootFS
+        run: |
+          docker build --platform linux/arm64 -t alpine-arm64-rootfs -f Dockerfile.alpine .
+          CONTAINER_ID=$(docker run -d --platform linux/arm64 alpine-arm64-rootfs sleep infinity)
+          docker export $CONTAINER_ID | gzip > ${{ env.OUTPUT_DIR }}/alpine-${{ env.ALPINE_VERSION }}-arm64-rootfs.tar.gz
+          docker stop $CONTAINER_ID && docker rm $CONTAINER_ID
+
+      - name: Build Arch Linux ARM ${{ env.ARCHARM_ARCH }} RootFS
+        run: |
+          docker build --platform linux/arm64 -t archarm-rootfs -f Dockerfile.archarm .
+          CONTAINER_ID=$(docker run -d --platform linux/arm64 archarm-rootfs sleep infinity)
+          docker export $CONTAINER_ID | gzip > ${{ env.OUTPUT_DIR }}/archlinuxarm-${{ env.ARCHARM_ARCH }}-rootfs.tar.gz
+          docker stop $CONTAINER_ID && docker rm $CONTAINER_ID
+
+      # 上传 Release（国内用户下载也可通过 GitHub 镜像站加速）
+      - name: Generate Release version
+        id: release_version
+        run: echo "VERSION=$(date +%Y%m%d)-v1.0.0" >> $GITHUB_ENV
+
+      - name: Create Release and upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.VERSION }}
+          name: ARM64 RootFS (CN Mirrors) ${{ env.VERSION }}
+          body: |
+            已集成国内加速镜像的 ARM64 RootFS：
+            - Ubuntu ${{ env.UBUNTU_VERSION }}（阿里云）
+            - Debian ${{ env.DEBIAN_VERSION }}（阿里云）
+            - Alpine ${{ env.ALPINE_VERSION }}（阿里云）
+            - Arch Linux ARM（清华源）
+          files: ${{ env.OUTPUT_DIR }}/*.tar.gz
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

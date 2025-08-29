@@ -1,4 +1,4 @@
-name: Build ARM64 Linux RootFS (With CN Mirrors)
+name: Build ARM64 RootFS (USTC Inside + XZ Max Compression)
 
 on:
   push:
@@ -10,75 +10,180 @@ on:
 
 env:
   OUTPUT_DIR: ./rootfs-output
-  UBUNTU_VERSION: 22.04
-  DEBIAN_VERSION: 12
-  ALPINE_VERSION: 3.19
+  UBUNTU_VER: 22.04
+  DEBIAN_VER: 12
+  ALPINE_VER: 3.19
   ARCHARM_ARCH: aarch64
+  RELEASE_VER: ${{ github.sha_short }}-$(date +%Y%m%d)
 
 jobs:
-  build-rootfs:
+  setup-env:
     runs-on: ubuntu-latest
+    outputs:
+      release_version: ${{ env.RELEASE_VER }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Set up QEMU for ARM64 emulation
         uses: docker/setup-qemu-action@v3
         with:
           platforms: arm64
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+      - name: Create shared output directory
+        run: mkdir -p ${{ env.OUTPUT_DIR }}
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
 
+  # 1. 构建 Ubuntu 22.04（XZ 极限压缩）
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    needs: setup-env
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Restore QEMU/Docker config
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+      - name: Restore Docker Buildx
+        uses: docker/setup-buildx-action@v3
       - name: Create output directory
         run: mkdir -p ${{ env.OUTPUT_DIR }}
-
-      # 构建各发行版 RootFS（国内镜像已在 Dockerfile 中集成）
-      - name: Build Ubuntu ${{ env.UBUNTU_VERSION }} ARM64 RootFS
+      - name: Build & Compress Ubuntu RootFS (XZ Max)
         run: |
           docker build --platform linux/arm64 -t ubuntu-arm64-rootfs -f Dockerfile.ubuntu .
           CONTAINER_ID=$(docker run -d --platform linux/arm64 ubuntu-arm64-rootfs sleep infinity)
-          docker export $CONTAINER_ID | gzip > ${{ env.OUTPUT_DIR }}/ubuntu-${{ env.UBUNTU_VERSION }}-arm64-rootfs.tar.gz
+          # XZ 极限压缩：-9e（最高压缩等级），--threads=0（自动用满 CPU 线程加速压缩）
+          docker export $CONTAINER_ID | xz -9e --threads=0 > ${{ env.OUTPUT_DIR }}/ubuntu-${{ env.UBUNTU_VER }}-arm64-rootfs.tar.xz
           docker stop $CONTAINER_ID && docker rm $CONTAINER_ID
+      - name: Upload Ubuntu RootFS (XZ)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ubuntu-rootfs
+          path: ${{ env.OUTPUT_DIR }}/ubuntu-${{ env.UBUNTU_VER }}-arm64-rootfs.tar.xz
+          retention-days: 1
 
-      - name: Build Debian ${{ env.DEBIAN_VERSION }} ARM64 RootFS
+  # 2. 构建 Debian 12（XZ 极限压缩）
+  build-debian:
+    runs-on: ubuntu-latest
+    needs: setup-env
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Restore QEMU/Docker config
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+      - name: Restore Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Create output directory
+        run: mkdir -p ${{ env.OUTPUT_DIR }}
+      - name: Build & Compress Debian RootFS (XZ Max)
         run: |
           docker build --platform linux/arm64 -t debian-arm64-rootfs -f Dockerfile.debian .
           CONTAINER_ID=$(docker run -d --platform linux/arm64 debian-arm64-rootfs sleep infinity)
-          docker export $CONTAINER_ID | gzip > ${{ env.OUTPUT_DIR }}/debian-${{ env.DEBIAN_VERSION }}-arm64-rootfs.tar.gz
+          docker export $CONTAINER_ID | xz -9e --threads=0 > ${{ env.OUTPUT_DIR }}/debian-${{ env.DEBIAN_VER }}-arm64-rootfs.tar.xz
           docker stop $CONTAINER_ID && docker rm $CONTAINER_ID
+      - name: Upload Debian RootFS (XZ)
+        uses: actions/upload-artifact@v4
+        with:
+          name: debian-rootfs
+          path: ${{ env.OUTPUT_DIR }}/debian-${{ env.DEBIAN_VER }}-arm64-rootfs.tar.xz
+          retention-days: 1
 
-      - name: Build Alpine ${{ env.ALPINE_VERSION }} ARM64 RootFS
+  # 3. 构建 Alpine 3.19（XZ 极限压缩）
+  build-alpine:
+    runs-on: ubuntu-latest
+    needs: setup-env
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Restore QEMU/Docker config
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+      - name: Restore Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Create output directory
+        run: mkdir -p ${{ env.OUTPUT_DIR }}
+      - name: Build & Compress Alpine RootFS (XZ Max)
         run: |
           docker build --platform linux/arm64 -t alpine-arm64-rootfs -f Dockerfile.alpine .
           CONTAINER_ID=$(docker run -d --platform linux/arm64 alpine-arm64-rootfs sleep infinity)
-          docker export $CONTAINER_ID | gzip > ${{ env.OUTPUT_DIR }}/alpine-${{ env.ALPINE_VERSION }}-arm64-rootfs.tar.gz
+          docker export $CONTAINER_ID | xz -9e --threads=0 > ${{ env.OUTPUT_DIR }}/alpine-${{ env.ALPINE_VER }}-arm64-rootfs.tar.xz
           docker stop $CONTAINER_ID && docker rm $CONTAINER_ID
+      - name: Upload Alpine RootFS (XZ)
+        uses: actions/upload-artifact@v4
+        with:
+          name: alpine-rootfs
+          path: ${{ env.OUTPUT_DIR }}/alpine-${{ env.ALPINE_VER }}-arm64-rootfs.tar.xz
+          retention-days: 1
 
-      - name: Build Arch Linux ARM ${{ env.ARCHARM_ARCH }} RootFS
+  # 4. 构建 Arch Linux ARM（XZ 极限压缩）
+  build-archarm:
+    runs-on: ubuntu-latest
+    needs: setup-env
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Restore QEMU/Docker config
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+      - name: Restore Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Create output directory
+        run: mkdir -p ${{ env.OUTPUT_DIR }}
+      - name: Build & Compress ArchARM RootFS (XZ Max)
         run: |
           docker build --platform linux/arm64 -t archarm-rootfs -f Dockerfile.archarm .
           CONTAINER_ID=$(docker run -d --platform linux/arm64 archarm-rootfs sleep infinity)
-          docker export $CONTAINER_ID | gzip > ${{ env.OUTPUT_DIR }}/archlinuxarm-${{ env.ARCHARM_ARCH }}-rootfs.tar.gz
+          docker export $CONTAINER_ID | xz -9e --threads=0 > ${{ env.OUTPUT_DIR }}/archlinuxarm-${{ env.ARCHARM_ARCH }}-rootfs.tar.xz
           docker stop $CONTAINER_ID && docker rm $CONTAINER_ID
+      - name: Upload ArchARM RootFS (XZ)
+        uses: actions/upload-artifact@v4
+        with:
+          name: archarm-rootfs
+          path: ${{ env.OUTPUT_DIR }}/archlinuxarm-${{ env.ARCHARM_ARCH }}-rootfs.tar.xz
+          retention-days: 1
 
-      # 上传 Release（国内用户下载也可通过 GitHub 镜像站加速）
-      - name: Generate Release version
-        id: release_version
-        run: echo "VERSION=$(date +%Y%m%d)-v1.0.0" >> $GITHUB_ENV
-
-      - name: Create Release and upload assets
+  # 5.  创建 Release（同步 XZ 产物格式）
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [setup-env, build-ubuntu, build-debian, build-alpine, build-archarm]
+    steps:
+      - name: Create output directory
+        run: mkdir -p ${{ env.OUTPUT_DIR }}
+      - name: Download all XZ-compressed RootFS
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ env.OUTPUT_DIR }}
+          pattern: *-rootfs
+          merge-multiple: true
+      - name: Create GitHub Release (XZ Compressed)
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ env.VERSION }}
-          name: ARM64 RootFS (CN Mirrors) ${{ env.VERSION }}
+          tag_name: v${{ needs.setup-env.outputs.release_version }}
+          name: ARM64 RootFS (USTC + XZ Max) v${{ needs.setup-env.outputs.release_version }}
           body: |
-            已集成国内加速镜像的 ARM64 RootFS：
-            - Ubuntu ${{ env.UBUNTU_VERSION }}（阿里云）
-            - Debian ${{ env.DEBIAN_VERSION }}（阿里云）
-            - Alpine ${{ env.ALPINE_VERSION }}（阿里云）
-            - Arch Linux ARM（清华源）
-          files: ${{ env.OUTPUT_DIR }}/*.tar.gz
+            🔹 核心特性：
+            1. RootFS 内部包管理源：USTC 镜像（加速后续包安装）
+            2. 基础镜像来源：Docker Hub 官方地址（保证纯净性）
+            3. 压缩方式：XZ 极限压缩（-9e 等级），尺寸比 GZ 缩小 30%-50%
+            4. 架构：ARM64（aarch64）
+            
+            📦 产物列表：
+            - Ubuntu ${{ env.UBUNTU_VER }}：ubuntu-${{ env.UBUNTU_VER }}-arm64-rootfs.tar.xz
+            - Debian ${{ env.DEBIAN_VER }}：debian-${{ env.DEBIAN_VER }}-arm64-rootfs.tar.xz
+            - Alpine ${{ env.ALPINE_VER }}：alpine-${{ env.ALPINE_VER }}-arm64-rootfs.tar.xz
+            - Arch Linux ARM：archlinuxarm-${{ env.ARCHARM_ARCH }}-rootfs.tar.xz
+          files: ${{ env.OUTPUT_DIR }}/*.tar.xz
           draft: false
           prerelease: false
         env:

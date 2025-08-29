@@ -1,31 +1,12 @@
-# 多阶段构建：第一阶段下载基础 RootFS（用 Alpine 作临时环境）
-FROM arm64v8/alpine:3.19 AS builder
-
-# 安装下载工具，并用阿里云源加速 Alpine 自身包管理
-RUN apk add --no-cache wget tar && \
-    # 关键：从清华源下载 Arch Linux ARM RootFS（比官方源快 10x+）
-    wget -O /archarm-rootfs.tar.gz https://mirrors.tuna.tsinghua.edu.cn/archlinuxarm/os/ArchLinuxARM-aarch64-latest.tar.gz && \
-    # 校验文件完整性（确保下载未损坏）
-    wget -O /archarm-rootfs.sha256 https://mirrors.tuna.tsinghua.edu.cn/archlinuxarm/os/ArchLinuxARM-aarch64-latest.tar.gz.sha256 && \
-    sha256sum -c /archarm-rootfs.sha256
-
-# 第二阶段：构建最终 RootFS（基于 Arch Linux ARM）
-FROM scratch
-
-# 从 builder 复制解压后的 RootFS
-COPY --from=builder /archarm-rootfs.tar.gz /
-
-# 解压并配置清华源（关键：后续 pacman 安装软件用国内源）
-RUN tar -zxf /archarm-rootfs.tar.gz -C / && \
-    rm /archarm-rootfs.tar.gz && \
-    # 替换 pacman 源为清华源（Arch Linux ARM 专用）
-    echo "Server = https://mirrors.tuna.tsinghua.edu.cn/archlinuxarm/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist && \
-    # 配置 DNS（清华 DNS，解析源站更快）
-    echo "nameserver 114.114.114.114" > /etc/resolv.conf && \
-    echo "nameserver 8.8.8.8" >> /etc/resolv.conf && \
-    # 初始化 pacman 密钥并更新系统（国内源加速）
+FROM arm64v8/archlinuxarm:latest
+RUN echo "[core]" > /etc/pacman.d/mirrorlist && \
+    echo "Server = https://mirrors.ustc.edu.cn/archlinuxarm/$arch/core" >> /etc/pacman.d/mirrorlist && \
+    echo "[extra]" >> /etc/pacman.d/mirrorlist && \
+    echo "Server = https://mirrors.ustc.edu.cn/archlinuxarm/$arch/extra" >> /etc/pacman.d/mirrorlist && \
+    echo "[community]" >> /etc/pacman.d/mirrorlist && \
+    echo "Server = https://mirrors.ustc.edu.cn/archlinuxarm/$arch/community" >> /etc/pacman.d/mirrorlist && \
     pacman-key --init && \
     pacman-key --populate archlinuxarm && \
-    pacman -Syu --noconfirm && \
-    # 清理 pacman 缓存（减小 RootFS 体积）
-    pacman -Scc --noconfirm
+    pacman -Syu --noconfirm ca-certificates && \
+    pacman -Scc --noconfirm && \
+    rm -rf /var/cache/pacman/pkg/* /tmp/*
