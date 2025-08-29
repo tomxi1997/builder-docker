@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/build-arm64-rootfs.yml'
+      - '.github/workflows/rootfs.yml'
       - 'Dockerfile.*'
   workflow_dispatch:
 
