@@ -1,0 +1,133 @@
+name: More ARM64 RootFS
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/more-rootfs.yml'
+      - 'Dockerfile.*'
+  workflow_dispatch:
+# 解决 Release 403 权限问题
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  # 1. Ubuntu 构建（并发任务1）
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    outputs:
+      file: ubuntu-22.04-arm64-rootfs.tar.xz
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+      - uses: docker/setup-buildx-action@v3
+      - run: |
+          mkdir -p ./rootfs-output
+          docker build --platform linux/arm64 -t ubuntu-rootfs -f Dockerfile.ubuntu .
+          CID=$(docker run -d --platform linux/arm64 ubuntu-rootfs sleep 30)
+          docker export $CID | xz -9e > ./rootfs-output/ubuntu-22.04-arm64-rootfs.tar.xz
+          docker stop $CID && docker rm $CID
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ubuntu-rootfs
+          path: ./rootfs-output/ubuntu-22.04-arm64-rootfs.tar.xz
+          retention-days: 1
+
+  # 2. Debian 构建（并发任务2，与 Ubuntu 同时执行）
+  build-debian:
+    runs-on: ubuntu-latest
+    outputs:
+      file: debian-12-arm64-rootfs.tar.xz
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+      - uses: docker/setup-buildx-action@v3
+      - run: |
+          mkdir -p ./rootfs-output
+          docker build --platform linux/arm64 -t debian-rootfs -f Dockerfile.debian .
+          CID=$(docker run -d --platform linux/arm64 debian-rootfs sleep 30)
+          docker export $CID | xz -9e > ./rootfs-output/debian-12-arm64-rootfs.tar.xz
+          docker stop $CID && docker rm $CID
+      - uses: actions/upload-artifact@v4
+        with:
+          name: debian-rootfs
+          path: ./rootfs-output/debian-12-arm64-rootfs.tar.xz
+          retention-days: 1
+
+  # 3. Alpine 构建（并发任务3，与前两个同时执行）
+  build-alpine:
+    runs-on: ubuntu-latest
+    outputs:
+      file: alpine-3.19-arm64-rootfs.tar.xz
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+      - uses: docker/setup-buildx-action@v3
+      - run: |
+          mkdir -p ./rootfs-output
+          docker build --platform linux/arm64 -t alpine-rootfs -f Dockerfile.alpine .
+          CID=$(docker run -d --platform linux/arm64 alpine-rootfs sleep 30)
+          docker export $CID | xz -9e > ./rootfs-output/alpine-3.19-arm64-rootfs.tar.xz
+          docker stop $CID && docker rm $CID
+      - uses: actions/upload-artifact@v4
+        with:
+          name: alpine-rootfs
+          path: ./rootfs-output/alpine-3.19-arm64-rootfs.tar.xz
+          retention-days: 1
+
+  # 4. ArchARM 构建（并发任务4，与所有任务同时执行）
+  build-archarm:
+    runs-on: ubuntu-latest
+    outputs:
+      file: archlinuxarm-aarch64-rootfs.tar.xz
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+      - uses: docker/setup-buildx-action@v3
+      - run: |
+          mkdir -p ./rootfs-output
+          docker build --platform linux/arm64 -t archarm-rootfs -f Dockerfile.archarm .
+          CID=$(docker run -d --platform linux/arm64 archarm-rootfs sleep 30)
+          docker export $CID | xz -9e > ./rootfs-output/archlinuxarm-aarch64-rootfs.tar.xz
+          docker stop $CID && docker rm $CID
+      - uses: actions/upload-artifact@v4
+        with:
+          name: archarm-rootfs
+          path: ./rootfs-output/archlinuxarm-aarch64-rootfs.tar.xz
+          retention-days: 1
+
+  # 5. 统一创建 Release（等待所有构建任务完成后执行）
+  create-release:
+    runs-on: ubuntu-latest
+    # 依赖所有构建任务，确保全部完成再打包Release
+    needs: [build-ubuntu, build-debian, build-alpine, build-archarm]
+    steps:
+      - run: mkdir -p ./rootfs-output
+      # 下载所有发行版的构建产物
+      - uses: actions/download-artifact@v4
+        with:
+          path: ./rootfs-output
+          pattern: *-rootfs
+          merge-multiple: true
+      # 创建包含所有产物的Release
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.sha_short }}-${{ date('YYYYMMDD') }}
+          name: Multi-Distro ARM64 RootFS ${{ date('YYYYMMDD') }}
+          body: |
+            📦 本次构建包含以下发行版（ARM64架构）：
+            - Ubuntu 22.04: ${{ needs.build-ubuntu.outputs.file }}
+            - Debian 12: ${{ needs.build-debian.outputs.file }}
+            - Alpine 3.19: ${{ needs.build-alpine.outputs.file }}
+            - ArchARM: ${{ needs.build-archarm.outputs.file }}
+          files: ./rootfs-output/*.tar.xz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
