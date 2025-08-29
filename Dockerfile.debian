@@ -1,0 +1,15 @@
+# 基于 ARM64 官方 slim 镜像（更小体积）
+FROM arm64v8/debian:12-slim
+
+# 关键：替换 apt 源为阿里云（Bookworm 对应 Debian 12）
+RUN echo "deb http://mirrors.aliyun.com/debian/ bookworm main contrib non-free non-free-firmware" > /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian/ bookworm-updates main contrib non-free non-free-firmware" >> /etc/apt/sources.list && \
+    echo "deb http://mirrors.aliyun.com/debian-security/ bookworm-security main contrib non-free non-free-firmware" >> /etc/apt/sources.list && \
+    # 配置 DNS（可选，解决部分环境 DNS 解析慢的问题）
+    echo "nameserver 223.5.5.5" > /etc/resolv.conf && \
+    echo "nameserver 223.6.6.6" >> /etc/resolv.conf && \
+    # 安装基础工具并清理
+    apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*

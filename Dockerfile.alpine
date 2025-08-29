@@ -1,0 +1,14 @@
+# 基于 ARM64 官方镜像（本身极小，重点优化 apk 源）
+FROM arm64v8/alpine:3.19
+
+# 关键：替换 apk 源为阿里云（Alpine 3.19 专用）
+RUN echo "https://mirrors.aliyun.com/alpine/v3.19/main/" > /etc/apk/repositories && \
+    echo "https://mirrors.aliyun.com/alpine/v3.19/community/" >> /etc/apk/repositories && \
+    # 配置 DNS（阿里云公共 DNS）
+    echo "nameserver 223.5.5.5" > /etc/resolv.conf && \
+    echo "nameserver 223.6.6.6" >> /etc/resolv.conf && \
+    # 更新包索引并升级（确保基础系统最新）
+    apk update && \
+    apk upgrade --no-cache && \
+    # 清理 apk 缓存（进一步减小体积）
+    rm -rf /var/cache/apk/*
